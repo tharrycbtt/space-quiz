@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Space Exploration Quiz</title>
+  <style>
+    :root {
+      --bg: #f6f8ff;
+      --surface: #ffffff;
+      --text: #182033;
+      --muted: #5a6480;
+      --primary: #5969ff;
+      --primary-2: #7b47ff;
+      --good: #21b66f;
+      --bad: #e14d5a;
+      --border: #d8def3;
+      --shadow: 0 18px 45px rgba(46, 60, 115, 0.16);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1220;
+        --surface: #171d31;
+        --text: #ecf0ff;
+        --muted: #a4b0d5;
+        --primary: #7f8bff;
+        --primary-2: #b075ff;
+        --good: #40d58d;
+        --bad: #ff6f82;
+        --border: #2d3760;
+        --shadow: 0 22px 52px rgba(0, 0, 0, 0.42);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      position: relative;
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--text);
+      background:
+        radial-gradient(1100px 500px at 8% -10%, rgba(121, 131, 255, 0.24), transparent 62%),
+        radial-gradient(900px 440px at 94% 0%, rgba(187, 107, 255, 0.2), transparent 62%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 28px 16px;
+      overflow: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(1.5px 1.5px at 8% 16%, color-mix(in srgb, #fff 85%, var(--primary) 15%) 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 20% 74%, color-mix(in srgb, #fff 78%, var(--primary-2) 22%) 99%, transparent 100%),
+        radial-gradient(1.4px 1.4px at 32% 28%, color-mix(in srgb, #fff 80%, var(--primary) 20%) 99%, transparent 100%),
+        radial-gradient(1.1px 1.1px at 44% 82%, color-mix(in srgb, #fff 76%, var(--primary-2) 24%) 99%, transparent 100%),
+        radial-gradient(1.3px 1.3px at 57% 13%, color-mix(in srgb, #fff 82%, var(--primary) 18%) 99%, transparent 100%),
+        radial-gradient(1.1px 1.1px at 66% 64%, color-mix(in srgb, #fff 75%, var(--primary-2) 25%) 99%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 31%, color-mix(in srgb, #fff 84%, var(--primary) 16%) 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 89% 70%, color-mix(in srgb, #fff 78%, var(--primary-2) 22%) 99%, transparent 100%);
+      opacity: 0.42;
+      animation: twinkle 6.5s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      background:
+        radial-gradient(1px 1px at 13% 42%, color-mix(in srgb, #fff 66%, var(--primary) 34%) 99%, transparent 100%),
+        radial-gradient(1px 1px at 27% 8%, color-mix(in srgb, #fff 65%, var(--primary-2) 35%) 99%, transparent 100%),
+        radial-gradient(1px 1px at 41% 54%, color-mix(in srgb, #fff 64%, var(--primary) 36%) 99%, transparent 100%),
+        radial-gradient(1px 1px at 59% 88%, color-mix(in srgb, #fff 65%, var(--primary-2) 35%) 99%, transparent 100%),
+        radial-gradient(1px 1px at 73% 47%, color-mix(in srgb, #fff 66%, var(--primary) 34%) 99%, transparent 100%),
+        radial-gradient(1px 1px at 86% 18%, color-mix(in srgb, #fff 65%, var(--primary-2) 35%) 99%, transparent 100%);
+      opacity: 0.24;
+      animation: twinkle-soft 8.5s ease-in-out infinite alternate-reverse;
+    }
+
+    .quiz-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .header {
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 14px 11px;
+      border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--primary) 42%, var(--border));
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 82%, var(--primary) 18%), color-mix(in srgb, var(--surface) 93%, var(--primary) 7%));
+      box-shadow:
+        inset 0 1px 0 color-mix(in srgb, #fff 24%, transparent),
+        0 8px 18px color-mix(in srgb, var(--primary) 22%, transparent);
+      font-size: 1.32rem;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: 0.025em;
+      text-wrap: balance;
+    }
+
+    h1::before {
+      content: "MISSION CONTROL";
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--primary) 45%, var(--border));
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.63rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 12px;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 9px,
+        color-mix(in srgb, var(--primary) 12%, transparent) 9px 10px
+      );
+      opacity: 0.35;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .progress-wrap {
+      height: 12px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--primary) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      transition: width 360ms ease;
+    }
+
+    .question {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin: 0 0 16px;
+      min-height: 3.1em;
+      display: grid;
+      align-items: center;
+    }
+
+    .options {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      text-align: left;
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface) 92%, var(--primary) 8%);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      transition: transform 140ms ease, box-shadow 140ms ease, border-color 180ms ease, background-color 180ms ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+      box-shadow: 0 4px 15px rgba(88, 105, 255, 0.16);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+
+    .feedback {
+      min-height: 27px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 200ms ease, transform 200ms ease, color 200ms ease;
+      color: var(--muted);
+    }
+
+    .feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feedback.correct {
+      color: var(--good);
+      animation: pop 380ms ease;
+    }
+
+    .feedback.wrong {
+      color: var(--bad);
+      animation: shake 380ms ease;
+    }
+
+    .results {
+      text-align: center;
+      display: none;
+      padding: 10px 4px 6px;
+    }
+
+    .results.show {
+      display: block;
+      animation: fadeIn 420ms ease both;
+    }
+
+    .emoji {
+      font-size: 3.1rem;
+      line-height: 1;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: float 1.8s ease-in-out infinite;
+    }
+
+    .result-title {
+      margin: 0 0 7px;
+      font-size: 1.3rem;
+    }
+
+    .result-copy {
+      margin: 0 0 15px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .restart-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(104, 98, 255, 0.35);
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.88); }
+      70% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: translateY(0); }
+      50% { opacity: 0.5; }
+      100% { opacity: 0.37; transform: translateY(-4px); }
+    }
+
+    @keyframes twinkle-soft {
+      0% { opacity: 0.2; transform: translateY(0); }
+      50% { opacity: 0.3; }
+      100% { opacity: 0.23; transform: translateY(3px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before,
+      body::after {
+        animation: none;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="quiz-card" aria-live="polite">
+    <section id="quizView">
+      <header class="header">
+        <h1>🚀 Space Exploration Quiz</h1>
+        <div class="stats">
+          <span id="qCounter">Question 1 / 10</span>
+          <span id="scoreCounter">Score: 0</span>
+        </div>
+        <div class="progress-wrap" aria-hidden="true">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </header>
+
+      <p class="question" id="questionText"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <section class="results" id="resultsView">
+      <div class="emoji" id="resultEmoji">🌟</div>
+      <h2 class="result-title" id="resultTitle">Mission complete!</h2>
+      <p class="result-copy" id="resultCopy"></p>
+      <div class="btn-row">
+        <button class="restart-btn" id="restartBtn" type="button">Play again</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const quizData = [
+      {
+        question: "Which planet in our solar system has the largest volcano, Olympus Mons?",
+        options: ["Venus", "Mars", "Jupiter", "Mercury"],
+        answer: "Mars"
+      },
+      {
+        question: "What was the first spacecraft to land humans on the Moon?",
+        options: ["Apollo 8", "Apollo 11", "Luna 2", "Gemini 4"],
+        answer: "Apollo 11"
+      },
+      {
+        question: "Which telescope launched in 2021 to observe the early universe in infrared?",
+        options: ["Hubble Space Telescope", "Kepler Space Telescope", "James Webb Space Telescope", "Chandra X-ray Observatory"],
+        answer: "James Webb Space Telescope"
+      },
+      {
+        question: "What is the name of NASA's most recent rover operating on Mars (landed 2021)?",
+        options: ["Curiosity", "Spirit", "Opportunity", "Perseverance"],
+        answer: "Perseverance"
+      },
+      {
+        question: "Which planet is famous for its prominent ring system?",
+        options: ["Neptune", "Saturn", "Uranus", "Mars"],
+        answer: "Saturn"
+      },
+      {
+        question: "What do we call a rocky object that survives its trip through Earth's atmosphere and reaches the ground?",
+        options: ["Comet", "Asteroid", "Meteor", "Meteorite"],
+        answer: "Meteorite"
+      },
+      {
+        question: "Which mission first carried humans into space in 1961?",
+        options: ["Vostok 1", "Mercury-Redstone 3", "Soyuz 1", "Sputnik 2"],
+        answer: "Vostok 1"
+      },
+      {
+        question: "What is the closest star to Earth besides the Sun?",
+        options: ["Sirius", "Alpha Centauri A", "Proxima Centauri", "Betelgeuse"],
+        answer: "Proxima Centauri"
+      },
+      {
+        question: "What is the term for the boundary around a black hole beyond which nothing can escape?",
+        options: ["Accretion disk", "Singularity shell", "Photon ring", "Event horizon"],
+        answer: "Event horizon"
+      },
+      {
+        question: "Which agency developed the Artemis program to return humans to the Moon?",
+        options: ["ESA", "JAXA", "NASA", "ISRO"],
+        answer: "NASA"
+      }
+    ];
+
+    const qCounter = document.getElementById("qCounter");
+    const scoreCounter = document.getElementById("scoreCounter");
+    const progressBar = document.getElementById("progressBar");
+    const questionText = document.getElementById("questionText");
+    const optionsBox = document.getElementById("options");
+    const feedback = document.getElementById("feedback");
+    const quizView = document.getElementById("quizView");
+    const resultsView = document.getElementById("resultsView");
+    const resultEmoji = document.getElementById("resultEmoji");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultCopy = document.getElementById("resultCopy");
+    const restartBtn = document.getElementById("restartBtn");
+
+    let index = 0;
+    let score = 0;
+    let isLocked = false;
+
+    function updateTopBar() {
+      qCounter.textContent = `Question ${index + 1} / ${quizData.length}`;
+      scoreCounter.textContent = `Score: ${score}`;
+      const ratio = (index / quizData.length) * 100;
+      progressBar.style.width = `${Math.max(0, Math.min(100, ratio))}%`;
+    }
+
+    function renderQuestion() {
+      const current = quizData[index];
+      updateTopBar();
+      feedback.className = "feedback";
+      feedback.textContent = "";
+      questionText.textContent = current.question;
+      optionsBox.innerHTML = "";
+      isLocked = false;
+
+      current.options.forEach((choice) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.textContent = choice;
+        btn.addEventListener("click", () => handleAnswer(choice, btn));
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function showFeedback(correct, correctAnswer) {
+      if (correct) {
+        feedback.textContent = "✅ Correct! Nice job, explorer.";
+        feedback.className = "feedback show correct";
+      } else {
+        feedback.textContent = `❌ Not quite. Correct answer: ${correctAnswer}`;
+        feedback.className = "feedback show wrong";
+      }
+    }
+
+    function handleAnswer(choice, clickedBtn) {
+      if (isLocked) return;
+      isLocked = true;
+      const current = quizData[index];
+      const isCorrect = choice === current.answer;
+
+      Array.from(optionsBox.children).forEach((btn) => {
+        btn.disabled = true;
+        if (btn.textContent === current.answer) {
+          btn.style.borderColor = "var(--good)";
+          btn.style.background = "color-mix(in srgb, var(--good) 18%, var(--surface))";
+        }
+      });
+
+      if (isCorrect) {
+        score += 1;
+        clickedBtn.style.borderColor = "var(--good)";
+        clickedBtn.style.background = "color-mix(in srgb, var(--good) 18%, var(--surface))";
+        scoreCounter.textContent = `Score: ${score}`;
+      } else {
+        clickedBtn.style.borderColor = "var(--bad)";
+        clickedBtn.style.background = "color-mix(in srgb, var(--bad) 17%, var(--surface))";
+      }
+
+      showFeedback(isCorrect, current.answer);
+
+      setTimeout(() => {
+        index += 1;
+        if (index < quizData.length) {
+          renderQuestion();
+        } else {
+          showResults();
+        }
+      }, 1000);
+    }
+
+    function getReaction(finalScore) {
+      const ratio = finalScore / quizData.length;
+      if (ratio === 1) return { emoji: "🏆", title: "Perfect mission!", line: "10/10 — You navigated space trivia flawlessly." };
+      if (ratio >= 0.8) return { emoji: "🚀", title: "Outstanding!", line: `${finalScore}/10 — Stellar knowledge of space exploration.` };
+      if (ratio >= 0.5) return { emoji: "🌕", title: "Great effort!", line: `${finalScore}/10 — You're well on your way to astronaut-level trivia.` };
+      return { emoji: "🛰️", title: "Keep exploring!", line: `${finalScore}/10 — Every mission teaches something new.` };
+    }
+
+    function showResults() {
+      progressBar.style.width = "100%";
+      quizView.style.display = "none";
+      resultsView.classList.add("show");
+      const reaction = getReaction(score);
+      resultEmoji.textContent = reaction.emoji;
+      resultTitle.textContent = reaction.title;
+      resultCopy.textContent = reaction.line;
+    }
+
+    function restartQuiz() {
+      index = 0;
+      score = 0;
+      quizView.style.display = "block";
+      resultsView.classList.remove("show");
+      scoreCounter.textContent = "Score: 0";
+      renderQuestion();
+    }
+
+    restartBtn.addEventListener("click", restartQuiz);
+    renderQuestion();
+  </script>
+</body>
+</html>
